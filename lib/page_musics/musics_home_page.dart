@@ -4,7 +4,7 @@ import 'package:toucanto_dashboard/theme/colors.dart';
 import 'package:toucanto_dashboard/theme/styles.dart';
 import 'package:toucanto_dashboard/ui_utils.dart';
 import 'package:toucanto_dashboard/page_musics/page_download/musics_download_page.dart';
-import 'package:toucanto_dashboard/page_musics/page_apply/musics_apply_page.dart';
+import 'package:toucanto_dashboard/page_musics/page_upload/musics_upload_page.dart';
 import 'package:toucanto_dashboard/page_musics/musics_home_view_model.dart';
 
 class MusicsHome extends StatefulWidget {
@@ -48,9 +48,9 @@ class _MusicsPageState extends State<MusicsHome> {
                   ),
                   AbsoluteSpacer(width: 20),
                   IconCard(
-                    text: 'Music Apply',
+                    text: 'Music Upload',
                     icon: Icons.app_registration,
-                    onTap: () => setState(() => page = MusicsApply()),
+                    onTap: () => setState(() => page = MusicsUpload()),
                   ),
                 ]
               ),

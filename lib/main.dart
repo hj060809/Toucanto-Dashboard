@@ -2,12 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:toucanto_dashboard/theme/colors.dart';
 import 'package:toucanto_dashboard/theme/styles.dart';
 import 'package:sidebarx/sidebarx.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'global_constants.dart';
 import 'package:toucanto_dashboard/page_musics/musics_home_page.dart';
 import 'package:toucanto_dashboard/page_accounts/accounts_home_page.dart';
 import 'package:toucanto_dashboard/page_vectors/vectors_home_page.dart';
 import 'package:toucanto_dashboard/page_algorithms/algorithms_home_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: '.env');
+
+  await Supabase.initialize(
+    url: SUPABASE_URL,
+    anonKey: SUPABASE_API_KEY,
+    debug: dotenv.get('FLUTTER_ENV', fallback: 'development') == 'development',
+  );
+
   runApp(const ToucantoApp());
 }
 

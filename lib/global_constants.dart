@@ -1,3 +1,8 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+final SUPABASE_URL = dotenv.get('SUPABASE_URL');
+final SUPABASE_API_KEY = dotenv.get('SUPABASE_API_KEY');
+
 const String STORAGE_NAME = "Toucanto Dashboard";
 const String MUSIC_STORAGE_NAME = "Musics";
 

@@ -131,6 +131,7 @@ class MusicsDownloadModel {
       "title": videoInfo.title,
       "audio_id": null,
       "vector_id": null,
+      "thumbnail_url": videoInfo.thumbNail.thumbNailURL,
       "from": "Youtube",
       "URL_code": url.videoID
     };

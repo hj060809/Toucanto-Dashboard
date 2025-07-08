@@ -1,0 +1,3 @@
+class MusicsUploadModel {
+  MusicsUploadModel();
+}
