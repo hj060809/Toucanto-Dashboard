@@ -95,7 +95,7 @@ class MusicsDownloadModel {
       return null;
     } finally {
       await sink?.close();
-      await webmFile?.delete().catchError((_) {});
+      await webmFile?.delete().catchError((_) => webmFile!);
     }
   }
 
@@ -116,7 +116,7 @@ class MusicsDownloadModel {
     }
 
     String jsonString = jsonEncode(backUpJson);
-    File file = await getFile(MUSIC_DOWNLOAD_CACHES_PATH, "downloadable_back_up.json");
+    File file = await getFile(MUSIC_DOWNLOAD_CACHES_PATH, "downloadable_back_up.json", "");
     file.writeAsString(jsonString);
   }
 
@@ -135,7 +135,7 @@ class MusicsDownloadModel {
       "URL_code": url.videoID
     };
     
-    File tempIdFile = await getFile(MUSIC_DOWNLOAD_STORAGE_PATH, "temporary_identifiers.json");
+    File tempIdFile = await getFile(MUSIC_DOWNLOAD_STORAGE_PATH, "temporary_identifiers.json", '{"temps":[]}');
     String jsonString = await tempIdFile.readAsString();
     List<dynamic> tempIds = jsonDecode(jsonString)["temps"];
     tempIds.add(incompletedID);
@@ -147,6 +147,12 @@ class MusicsDownloadModel {
 
   Future<ProcessResult> identifyMusics() async {
     Directory applierPath = await getDirectory(MUSIC_DOWNLOAD_APPLIER_PATH);
+
+    /*File applier = File('${applierPath.path}/identify.py');
+    if(!(await applier.exists())){ applier 파일 설치 코드
+      
+    }*/
+
     return await Process.run(
       'python',
       ['${applierPath.path}/identify.py'],

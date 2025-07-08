@@ -115,7 +115,7 @@ class _MusicsDownloadState extends State<MusicsDownload> {
                         switch(downloadResultCode){
                           case MusicsDownloadViewModel.DOWNLOAD_EMPTY_LIST: showWarningToast('Downloadable Not Found: downloadable list is empty', fToast);
                           case MusicsDownloadViewModel.DOWNLOAD_ERROR_OCCURED: showWarningToast('Error Occured: Somthing is wrong during download process', fToast);
-                          case MusicsDownloadViewModel.DOWNLOAD_SUCCESS: showToast("", fToast); // 석세스 
+                          case MusicsDownloadViewModel.DOWNLOAD_SUCCESS: showToast("Download Complete: Check the result of task", fToast);
                         }
                       },
                       child: Text('Download'),

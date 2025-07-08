@@ -18,11 +18,12 @@ Future<Directory> getDirectory(List<String> path) async {
   return Directory(directoryPath);
 }
 
-Future<File> getFile(List<String> path, String fileName) async {
+Future<File> getFile(List<String> path, String fileName, String defaultContent) async {
   Directory dir = await getDirectory(path);
   File file = File("${dir.path}\\$fileName");
-  if(await file.exists()){
+  if(!(await file.exists())){
     await file.create();
+    await file.writeAsString(defaultContent);
   }
   return file;
 }

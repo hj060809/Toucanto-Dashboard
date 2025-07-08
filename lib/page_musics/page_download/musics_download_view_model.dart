@@ -164,7 +164,7 @@ class MusicsDownloadViewModel extends ChangeNotifier{
   }
 
   void onPressedLoadSavedList() async {
-    File file = await getFile(MUSIC_DOWNLOAD_CACHES_PATH, "downloadable_back_up.json");
+    File file = await getFile(MUSIC_DOWNLOAD_CACHES_PATH, "downloadable_back_up.json", '{"back_up":[]}');
     String jsonString = await file.readAsString();
     List<dynamic> backUpJson = jsonDecode(jsonString)["back_up"];
     List<Downloadable> downloadablesFromJson = [];
