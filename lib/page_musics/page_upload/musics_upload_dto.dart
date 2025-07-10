@@ -1,3 +1,7 @@
+import 'package:toucanto_dashboard/page_musics/page_upload/musics_upload_view_model.dart';
+import 'package:toucanto_dashboard/utils/logic_utils.dart';
+import 'package:toucanto_dashboard/utils/object_utils.dart';
+
 class AudioID {
   AudioID({
     required this.methodCode,
@@ -7,7 +11,15 @@ class AudioID {
 
   final String methodCode;
   final String id;
-  final String settingJSON;
+  final Map<String, dynamic> settingJSON;
+
+  factory AudioID.fromJson(Map<String, dynamic> json){
+    return AudioID(
+      methodCode: json["AIGM"],
+      id: json["id"],
+      settingJSON: json["settings"],
+    );
+  }
 }
 
 class VectorID {
@@ -19,13 +31,20 @@ class VectorID {
 
   final String methodCode;
   final List<double> id;
-  final String settingJSON;
+  final Map<String, dynamic> settingJSON;
+
+  factory VectorID.fromJson(Map<String, dynamic> json){
+    List<dynamic> id = json["id"];
+    return VectorID(
+      methodCode: json["VIGM"],
+      id: id.cast<double>(),
+      settingJSON: json["settings"],
+    );
+  }
 }
 
-class IdentifiedMusicInfo{
-  IdentifiedMusicInfo({
-    required this.fileName,
-    required this.title,
+class MusicIdentifier{
+  MusicIdentifier({
     required this.downloadTime,
     required this.uploader,
     required this.thumbnailURL,
@@ -36,14 +55,103 @@ class IdentifiedMusicInfo{
     required this.duplicatedMusics,
   });
 
-  final String fileName;
-  final String title;
-  final int downloadTime;
+  final DateTime downloadTime;
   final String uploader;
   final String thumbnailURL;
   final String source;
   final String urlCode;
   final AudioID audioID;
   final VectorID vectorID;
-  final Map<String, String> duplicatedMusics;
+  Map<String, String> duplicatedMusics;
+
+  factory MusicIdentifier.fromJson(Map<String, dynamic> json){
+    Map<String, dynamic> duplications = json["duplications"];
+    return MusicIdentifier(
+      downloadTime: DateTime.fromMillisecondsSinceEpoch(json["download_time"]),
+      uploader: json["uploader"],
+      thumbnailURL: json["thumbnail_url"],
+      source: json["from"],
+      urlCode: json["URL_code"],
+      audioID: AudioID.fromJson(json["audio_id"]),
+      vectorID: VectorID.fromJson(json["vector_id"]),
+      duplicatedMusics: duplications.cast<String, String>()
+    );
+  }
+}
+
+class MusicPreference{
+  MusicPreference({
+    this.averageListeningDuration = 0,
+    this.likes = 0,
+    this.playCount = 0
+  });
+
+  final double averageListeningDuration;
+  final int likes;
+  final int playCount;
+}
+
+class Artist{
+  Artist({
+    required this.name,
+    required this.debutDate,
+    required this.nationality
+  });
+
+  String name;
+  DateTime debutDate;
+  VEnum nationality;
+}
+
+class MusicProfileImage{
+  MusicProfileImage({
+    required this.imagePath
+  });
+
+  String imagePath;
+}
+
+class MusicInfo{
+  MusicInfo({
+    required this.fileName,
+    required this.duration,
+    required this.identifier,
+    MusicPreference? preference,
+    this.title,
+    this.releaseDate,
+    this.genre,
+    this.moods,
+    this.language,
+    this.artist,
+    this.profileImage,
+    this.extraTags,
+    this.uploadState = MusicsUploadViewModel.UPLOAD_FREEZE
+  }) : preference = preference ?? MusicPreference();
+
+  final String fileName;
+  String? title;
+  final double duration;
+  final MusicIdentifier identifier;
+  DateTime? releaseDate;
+  VEnum? genre; // enum in Supabase
+  List<VEnum>? moods; // enum in Supabase
+  VEnum? language; // enum in Supabase
+  MusicPreference preference;
+  Artist? artist;
+  MusicProfileImage? profileImage;
+  List<VEnum>? extraTags; // enum in Supabase
+
+  int uploadState;
+
+  void setUploadingState(){
+    uploadState = MusicsUploadViewModel.UPLOADING;
+  }
+
+  void setUploadSuccessState(){
+    uploadState = MusicsUploadViewModel.UPLOAD_FAIL;
+  }
+
+  void setUploadFailState(){
+    uploadState = MusicsUploadViewModel.UPLOAD_SUCCESS;
+  }
 }

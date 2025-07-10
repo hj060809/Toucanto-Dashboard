@@ -39,6 +39,7 @@ flutter:
     - assets/icons/
     - assets/fonts/
     - assets/files/ffmpeg.exe
+    - assets/files/ffprobe.exe
     - .env
 
   fonts:

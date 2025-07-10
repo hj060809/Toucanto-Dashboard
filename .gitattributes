@@ -1,3 +1,4 @@
 /build filter=lfs diff=lfs merge=lfs -text
 /assets/files/ffmpeg.exe filter=lfs diff=lfs merge=lfs -text
 /windows/flutter/ephemeral filter=lfs diff=lfs merge=lfs -text
+assets/files/ffprobe.exe filter=lfs diff=lfs merge=lfs -text

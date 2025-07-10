@@ -3,7 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:toucanto_dashboard/global_constants.dart';
 import 'dart:io';
-import 'package:toucanto_dashboard/logic_utils.dart';
+import 'package:toucanto_dashboard/utils/logic_utils.dart';
 import 'package:toucanto_dashboard/page_musics/page_download/musics_download_model.dart';
 import 'package:toucanto_dashboard/page_musics/page_download/musics_download_dto.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -163,7 +163,7 @@ class MusicsDownloadViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  void onPressedLoadSavedList() async {
+  void loadSavedList() async {
     File file = await getFile(MUSIC_DOWNLOAD_CACHES_PATH, "downloadable_back_up.json", '{"back_up":[]}');
     String jsonString = await file.readAsString();
     List<dynamic> backUpJson = jsonDecode(jsonString)["back_up"];
@@ -192,7 +192,7 @@ class MusicsDownloadViewModel extends ChangeNotifier{
 
     bool isSuccessAll = true;
 
-    String ffmpegPath = await _musicsDownloadModel.prepareFFmpeg();
+    String ffmpegPath = await prepareFFmpeg();
     YoutubeExplode youtubeExplode = YoutubeExplode();
     for (int i = 0; i < downloadables.length; i++) {
       downloadables[i].setDownload();

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:toucanto_dashboard/page_musics/page_upload/musics_upload_view_model.dart';
 import 'package:toucanto_dashboard/theme/colors.dart';
 import 'package:toucanto_dashboard/theme/styles.dart';
-import 'package:toucanto_dashboard/ui_utils.dart';
+import 'package:toucanto_dashboard/utils/ui_utils.dart';
 import 'package:toucanto_dashboard/page_musics/page_download/musics_download_page.dart';
 import 'package:toucanto_dashboard/page_musics/page_upload/musics_upload_page.dart';
 import 'package:toucanto_dashboard/page_musics/musics_home_view_model.dart';
@@ -50,7 +51,7 @@ class _MusicsPageState extends State<MusicsHome> {
                   IconCard(
                     text: 'Music Upload',
                     icon: Icons.app_registration,
-                    onTap: () => setState(() => page = MusicsUpload()),
+                    onTap: () => setState(() => page = MusicsUpload())
                   ),
                 ]
               ),

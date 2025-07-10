@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toucanto_dashboard/theme/colors.dart';
 import 'package:toucanto_dashboard/theme/styles.dart';
-import 'package:toucanto_dashboard/ui_utils.dart';
+import 'package:toucanto_dashboard/utils/ui_utils.dart';
 
 class Page extends StatefulWidget {
   const Page({super.key});

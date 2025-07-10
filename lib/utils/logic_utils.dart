@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
 
 Future<Directory> getDirectory(List<String> path) async {
   Directory documentDir = await getApplicationDocumentsDirectory();
@@ -26,6 +27,36 @@ Future<File> getFile(List<String> path, String fileName, String defaultContent) 
     await file.writeAsString(defaultContent);
   }
   return file;
+}
+
+Future<File?> getNullableFile(List<String> path, String fileName) async {
+  Directory dir = await getDirectory(path);
+  File file = File("${dir.path}\\$fileName");
+  if(!(await file.exists())){
+    return null;
+  }
+  return file;
+}
+
+Future<String> prepareFFmpeg() async {
+  return await prepareFile('assets/files/ffmpeg.exe');
+}
+
+Future<String> prepareFFprobe() async {
+  return await prepareFile('assets/files/ffprobe.exe');
+}
+
+Future<String> prepareFile(String assetPath) async {
+  final byteData = await rootBundle.load(assetPath);
+  final tempDir = await getTemporaryDirectory();
+  final filePath = '${tempDir.path}/${extractFileName(assetPath)}';
+  final file = File(filePath);
+  await file.writeAsBytes(byteData.buffer.asUint8List(), flush: true);
+  return filePath;
+}
+
+String extractFileName(String path) {
+  return path.replaceAll('\\', '/').split('/').last;
 }
 
 String getCurrentTimeString(){

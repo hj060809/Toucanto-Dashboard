@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:toucanto_dashboard/page_musics/page_download/musics_download_dto.dart';
 import 'package:toucanto_dashboard/global_constants.dart';
-import 'package:toucanto_dashboard/logic_utils.dart';
+import 'package:toucanto_dashboard/utils/logic_utils.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class MusicsDownloadModel {
@@ -97,15 +97,6 @@ class MusicsDownloadModel {
       await sink?.close();
       await webmFile?.delete().catchError((_) => webmFile!);
     }
-  }
-
-  Future<String> prepareFFmpeg() async {
-    final byteData = await rootBundle.load('assets/files/ffmpeg.exe');
-    final tempDir = await getTemporaryDirectory();
-    final ffmpegPath = '${tempDir.path}/ffmpeg.exe';
-    final file = File(ffmpegPath);
-    await file.writeAsBytes(byteData.buffer.asUint8List(), flush: true);
-    return ffmpegPath;
   }
 
   void backUp() async {

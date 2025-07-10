@@ -75,6 +75,27 @@ Widget IconCard({
   );
 }
 
+class CircularProgressIndicatorWithMessage extends StatelessWidget {
+  const CircularProgressIndicatorWithMessage({
+    super.key,
+    required this.message
+  });
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CircularProgressIndicator(),
+        AbsoluteSpacer(height: 10),
+        Text(message, style: basicText_Light(fS: 15))
+      ],
+    );
+  }
+}
+
 void showToast(String message, FToast fToast) {
   Widget toast = Container(
     padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
