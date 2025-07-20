@@ -4,6 +4,7 @@ import 'package:toucanto_dashboard/theme/styles.dart';
 import 'package:sidebarx/sidebarx.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:toucanto_dashboard/utils/logic_utils.dart';
 import 'global_constants.dart';
 import 'package:toucanto_dashboard/page_musics/musics_home_page.dart';
 import 'package:toucanto_dashboard/page_accounts/accounts_home_page.dart';
@@ -20,6 +21,9 @@ void main() async {
     anonKey: SUPABASE_API_KEY,
     debug: dotenv.get('FLUTTER_ENV', fallback: 'development') == 'development',
   );
+
+  cacheSupabaseEnums();
+  cacheExtraTag();
 
   runApp(const ToucantoApp());
 }
@@ -49,34 +53,35 @@ class ToucantoMainFrame extends StatefulWidget {
 class _ToucantoMainFrameState extends State<ToucantoMainFrame> {
   final _controller = SidebarXController(selectedIndex: 0, extended: false);
   final _key = GlobalKey<ScaffoldState>();
-  
+
   @override
   Widget build(BuildContext context) {
-    return Builder(builder: (context){
-      final isSmallScreen = MediaQuery.of(context).size.width < 600;
-      return Scaffold(
-        key: _key,
-        appBar: isSmallScreen ? AppBar(
-          title: Text(
-            'Dashboard',
-            style: basicInvertedTitle_Light()
-          ),
-          backgroundColor: toucanticDeepColor_Light,
-          shadowColor: toucanticColor_Light,
-          elevation: 4,
-        ) : null,
-        body: Row(
-          children: [
-            if (!isSmallScreen) MainSidebarX(controller: _controller),
-            Expanded(
-              child: MainContent(
-                controller: _controller,
+    return Builder(
+      builder: (context) {
+        final isSmallScreen = MediaQuery.of(context).size.width < 600;
+        return Scaffold(
+          key: _key,
+          appBar: isSmallScreen
+              ? AppBar(
+                  title: Text('Dashboard', style: basicInvertedTitle_Light()),
+                  backgroundColor: toucanticDeepColor_Light,
+                  shadowColor: toucanticColor_Light,
+                  elevation: 4,
+                )
+              : null,
+          body: Row(
+            children: [
+              if (!isSmallScreen) MainSidebarX(controller: _controller),
+              Expanded(
+                child: MainContent(
+                  controller: _controller,
+                ),
               ),
-            ),
-          ],
-        ),
-      );
-    });
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -84,7 +89,8 @@ class MainSidebarX extends StatelessWidget {
   const MainSidebarX({
     Key? key,
     required SidebarXController controller,
-  }) : _controller = controller, super(key: key);
+  }) : _controller = controller,
+       super(key: key);
 
   final SidebarXController _controller;
 
@@ -114,7 +120,6 @@ class MainSidebarX extends StatelessWidget {
         selectedItemDecoration: BoxDecoration(
           color: toucanticColor_Light,
           borderRadius: BorderRadius.circular(8),
-
         ),
       ),
       extendedTheme: const SidebarXTheme(
@@ -137,7 +142,7 @@ class MainSidebarX extends StatelessWidget {
               height: 48,
               fit: BoxFit.contain,
             ),
-          )
+          ),
         );
       },
       items: [
@@ -175,7 +180,7 @@ class MainSidebarX extends StatelessWidget {
           onTap: () {
             _controller.selectIndex(4);
           },
-        )
+        ),
       ],
     );
   }

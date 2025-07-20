@@ -8,8 +8,7 @@ import 'package:toucanto_dashboard/page_musics/page_download/musics_download_mod
 import 'package:toucanto_dashboard/page_musics/page_download/musics_download_dto.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-
-class MusicsDownloadViewModel extends ChangeNotifier{
+class MusicsDownloadViewModel extends ChangeNotifier {
   static const URL_APPLY_SUCCESS = 0;
   static const URL_APPLY_DUPLICATED = 1;
   static const URL_APPLY_NOT_FOUND = 2;
@@ -25,7 +24,7 @@ class MusicsDownloadViewModel extends ChangeNotifier{
 
   final MusicsDownloadModel _musicsDownloadModel = MusicsDownloadModel(
     downloadables: [],
-    downloadPath: null
+    downloadPath: null,
   );
 
   List<Downloadable> get downloadables => _musicsDownloadModel.downloadables;
@@ -33,7 +32,7 @@ class MusicsDownloadViewModel extends ChangeNotifier{
 
   int downloadingState = DOWNLOAD_STATE_NOT_STARTED;
 
-  void startDownload(){
+  void startDownload() {
     downloadingState = DOWNLOADING;
     for (int i = 0; i < downloadables.length; i++) {
       downloadables[i].setReady();
@@ -41,36 +40,36 @@ class MusicsDownloadViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  void cleanUpDownload(){
+  void cleanUpDownload() {
     downloadingState = DOWNLOAD_STATE_CLEAN_UP;
     notifyListeners();
   }
 
-  void stopDownload(){
+  void stopDownload() {
     downloadingState = DOWNLOAD_STATE_NOT_STARTED;
     notifyListeners();
   }
 
-  void setDownloadables(List<Downloadable> ds){
+  void setDownloadables(List<Downloadable> ds) {
     _musicsDownloadModel.downloadables = ds;
     _musicsDownloadModel.backUp();
     notifyListeners();
   }
 
-  void setDownloadablesNoBackUp(List<Downloadable> ds){
+  void setDownloadablesNoBackUp(List<Downloadable> ds) {
     _musicsDownloadModel.downloadables = ds;
     notifyListeners();
   }
 
-  void addDownloadables(Downloadable downloadable){
+  void addDownloadables(Downloadable downloadable) {
     //downloadables.add(downloadable);
     downloadables.insert(0, downloadable);
     notifyListeners();
   }
 
-  void clearDownloadables(){
-    for (int i = downloadables.length-1; i >= 0; i--) {
-      if(downloadables[i].downloadState == Downloadable.DOWNLOAD_FAIL){
+  void clearDownloadables() {
+    for (int i = downloadables.length - 1; i >= 0; i--) {
+      if (downloadables[i].downloadState == Downloadable.DOWNLOAD_FAIL) {
         downloadables[i].freeze();
       } else {
         _musicsDownloadModel.downloadables.removeAt(i);
@@ -81,13 +80,16 @@ class MusicsDownloadViewModel extends ChangeNotifier{
   }
 
   void registURL(MusicURL musicURL) {
-    String videoInfoURL = 'https://www.youtube.com/oembed?url=${musicURL.url}&format=json';
-    
-    Future<VideoInfo> result = _musicsDownloadModel.fetchVideoInfo(videoInfoURL);
+    String videoInfoURL =
+        'https://www.youtube.com/oembed?url=${musicURL.url}&format=json';
+
+    Future<VideoInfo> result = _musicsDownloadModel.fetchVideoInfo(
+      videoInfoURL,
+    );
 
     Downloadable downloadable = Downloadable(
       url: musicURL,
-      futureVideoInfo: result
+      futureVideoInfo: result,
     );
 
     addDownloadables(downloadable);
@@ -108,7 +110,7 @@ class MusicsDownloadViewModel extends ChangeNotifier{
           showNotFoundToast = true;
           continue;
         }
-        if (_musicsDownloadModel.isContainedURL(musicURL, downloadables)){
+        if (_musicsDownloadModel.isContainedURL(musicURL, downloadables)) {
           showDuplicateToast = true;
           continue;
         }
@@ -129,7 +131,7 @@ class MusicsDownloadViewModel extends ChangeNotifier{
     return URL_APPLY_SUCCESS;
   }
 
-  void onPressedDeleteDownloadable(int index){
+  void onPressedDeleteDownloadable(int index) {
     downloadables.removeAt(index);
     _musicsDownloadModel.backUp();
     //리스트 역순 정렬해서 그럼
@@ -139,10 +141,10 @@ class MusicsDownloadViewModel extends ChangeNotifier{
   void onPressedSelectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['txt']
+      allowedExtensions: ['txt'],
     );
 
-    if (result != null && result.files.isNotEmpty){
+    if (result != null && result.files.isNotEmpty) {
       PlatformFile file = result.files.first;
 
       File newFile = new File(file.path!);
@@ -164,30 +166,43 @@ class MusicsDownloadViewModel extends ChangeNotifier{
   }
 
   void loadSavedList() async {
-    File file = await getFile(MUSIC_DOWNLOAD_CACHES_PATH, "downloadable_back_up.json", '{"back_up":[]}');
+    File file = await getFile(
+      MUSIC_DOWNLOAD_CACHES_PATH,
+      "downloadable_back_up.json",
+      '{"back_up":[]}',
+    );
     String jsonString = await file.readAsString();
     List<dynamic> backUpJson = jsonDecode(jsonString)["back_up"];
     List<Downloadable> downloadablesFromJson = [];
-    for(Map<String, dynamic> downloadableJson in backUpJson){
-      downloadablesFromJson.add(Downloadable.fromJson(downloadableJson));// 이거 시발 왜 작동 안함?
+    for (Map<String, dynamic> downloadableJson in backUpJson) {
+      downloadablesFromJson.add(
+        Downloadable.fromJson(downloadableJson),
+      ); // 이거 시발 왜 작동 안함?
     }
     setDownloadablesNoBackUp(downloadablesFromJson);
   }
 
-  Future<int> onPressedDownload() async { //wrapper 작성 어떻게 함
-    if(downloadables.isEmpty){return DOWNLOAD_EMPTY_LIST;}
+  Future<int> onPressedDownload() async {
+    //wrapper 작성 어떻게 함
+    if (downloadables.isEmpty) {
+      return DOWNLOAD_EMPTY_LIST;
+    }
     startDownload();
     // 다운로드시 프로그래스바 설정
 
     List<Directory> saveDirs = [];
 
-    if(downloadPath != null){
-      Directory dir = Directory("$downloadPath\\Musics - ${getCurrentTimeString()}");
+    if (downloadPath != null) {
+      Directory dir = Directory(
+        "$downloadPath\\Musics - ${getCurrentTimeString()}",
+      );
       await dir.create();
       saveDirs.add(dir);
     }
 
-    Directory downloadDir = await getDirectory(MUSIC_DOWNLOAD_TEMPORARY_STORAGE_PATH);
+    Directory downloadDir = await getDirectory(
+      MUSIC_DOWNLOAD_TEMPORARY_STORAGE_PATH,
+    );
     saveDirs.add(downloadDir);
 
     bool isSuccessAll = true;
@@ -197,16 +212,24 @@ class MusicsDownloadViewModel extends ChangeNotifier{
     for (int i = 0; i < downloadables.length; i++) {
       downloadables[i].setDownload();
       notifyListeners();
-      
-      String? musicFileTitle = await _musicsDownloadModel.downloadMusic(downloadables[i].url, saveDirs, ffmpegPath, youtubeExplode);
+
+      String? musicFileTitle = await _musicsDownloadModel.downloadMusic(
+        downloadables[i].url,
+        saveDirs,
+        ffmpegPath,
+        youtubeExplode,
+      );
       bool isSuccess = musicFileTitle != null;
 
       downloadables[i].result(isSuccess);
       notifyListeners();
 
       // 음악 등록 프로세스
-      if(isSuccess){
-        await _musicsDownloadModel.registerMusic(downloadables[i], musicFileTitle);
+      if (isSuccess) {
+        await _musicsDownloadModel.registerMusic(
+          downloadables[i],
+          musicFileTitle,
+        );
       }
       isSuccessAll &= isSuccess;
     }
@@ -223,7 +246,7 @@ class MusicsDownloadViewModel extends ChangeNotifier{
     stopDownload();
     clearDownloadables();
 
-    if(isSuccessAll){
+    if (isSuccessAll) {
       return DOWNLOAD_SUCCESS;
     } else {
       return DOWNLOAD_ERROR_OCCURED;

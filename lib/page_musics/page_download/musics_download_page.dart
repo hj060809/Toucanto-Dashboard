@@ -15,7 +15,7 @@ class MusicsDownload extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<MusicsDownloadViewModel>(
       create: (_) => MusicsDownloadViewModel(),
-      child: MusicsDownloadInnerProv()
+      child: MusicsDownloadInnerProv(),
     );
   }
 }
@@ -31,7 +31,7 @@ class _MusicsDownloadState extends State<MusicsDownloadInnerProv> {
   final TextEditingController urlInputController = TextEditingController();
 
   late FToast fToast;
- 
+
   @override
   void initState() {
     super.initState();
@@ -57,19 +57,31 @@ class _MusicsDownloadState extends State<MusicsDownloadInnerProv> {
         ),
         AbsoluteSpacer(height: 10),
         Consumer<MusicsDownloadViewModel>(
-          builder: (context, provider, child){
+          builder: (context, provider, child) {
             return URLInputField(
               controller: urlInputController,
-              onPressed: provider.downloadingState != MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED ? null : () {
-                int flag = provider.onPressedApplyURL(urlInputController.text);
-                
-                switch(flag){
-                  case MusicsDownloadViewModel.URL_APPLY_NOT_FOUND: showWarningToast('URL or Video Not Found', fToast);
-                  case MusicsDownloadViewModel.URL_APPLY_DUPLICATED: showWarningToast('Already Registered URL', fToast);
-                  case MusicsDownloadViewModel.URL_APPLY_UNKNOWN_ERROR: showWarningToast('Unknown Error: Failed to Apply URL', fToast);
-                }
-                urlInputController.text = '';
-              },
+              onPressed:
+                  provider.downloadingState !=
+                      MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED
+                  ? null
+                  : () {
+                      int flag = provider.onPressedApplyURL(
+                        urlInputController.text,
+                      );
+
+                      switch (flag) {
+                        case MusicsDownloadViewModel.URL_APPLY_NOT_FOUND:
+                          showWarningToast('URL or Video Not Found', fToast);
+                        case MusicsDownloadViewModel.URL_APPLY_DUPLICATED:
+                          showWarningToast('Already Registered URL', fToast);
+                        case MusicsDownloadViewModel.URL_APPLY_UNKNOWN_ERROR:
+                          showWarningToast(
+                            'Unknown Error: Failed to Apply URL',
+                            fToast,
+                          );
+                      }
+                      urlInputController.text = '';
+                    },
             );
           },
         ),
@@ -78,75 +90,111 @@ class _MusicsDownloadState extends State<MusicsDownloadInnerProv> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Consumer<MusicsDownloadViewModel>(
-              builder: (context, provider, child){
+              builder: (context, provider, child) {
                 return ElevatedButton(
-                  onPressed: provider.downloadingState != MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED ? null : provider.onPressedSelectFile,
+                  onPressed:
+                      provider.downloadingState !=
+                          MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED
+                      ? null
+                      : provider.onPressedSelectFile,
                   child: Text('Select File'),
                 );
-              }
+              },
             ),
             AbsoluteSpacer(width: 10),
             Consumer<MusicsDownloadViewModel>(
-              builder: (context, provider, child){
+              builder: (context, provider, child) {
                 return ElevatedButton(
-                  onPressed: provider.downloadingState != MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED ? null : provider.clearDownloadables,
+                  onPressed:
+                      provider.downloadingState !=
+                          MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED
+                      ? null
+                      : provider.clearDownloadables,
                   child: Text('Delete All'),
                 );
-              }
+              },
             ),
           ],
         ),
         AbsoluteSpacer(height: 15),
         Consumer<MusicsDownloadViewModel>(
-          builder: (context, provider, child){
+          builder: (context, provider, child) {
             return DownloadableList(
               downloadableList: provider.downloadables,
               downloadState: provider.downloadingState,
-              onDeletePressed: provider.onPressedDeleteDownloadable
+              onDeletePressed: provider.onPressedDeleteDownloadable,
             );
-          }
+          },
         ),
         AbsoluteSpacer(height: 15),
         Row(
           children: [
             Expanded(
               child: Consumer<MusicsDownloadViewModel>(
-                builder: (context, provider, child){
+                builder: (context, provider, child) {
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 24),
                     ),
-                    onPressed: provider.downloadingState != MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED ? null : () async {
-                      int downloadResultCode = await provider.onPressedDownload();
-                      switch(downloadResultCode){
-                        case MusicsDownloadViewModel.DOWNLOAD_EMPTY_LIST: showWarningToast('Downloadable Not Found: downloadable list is empty', fToast);
-                        case MusicsDownloadViewModel.DOWNLOAD_ERROR_OCCURED: showWarningToast('Error Occured: Somthing is wrong during download process', fToast);
-                        case MusicsDownloadViewModel.DOWNLOAD_SUCCESS: showToast("Download Complete: Check the result of task", fToast);
-                      }
-                    },
+                    onPressed:
+                        provider.downloadingState !=
+                            MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED
+                        ? null
+                        : () async {
+                            int downloadResultCode = await provider
+                                .onPressedDownload();
+                            switch (downloadResultCode) {
+                              case MusicsDownloadViewModel.DOWNLOAD_EMPTY_LIST:
+                                showWarningToast(
+                                  'Downloadable Not Found: downloadable list is empty',
+                                  fToast,
+                                );
+                              case MusicsDownloadViewModel
+                                  .DOWNLOAD_ERROR_OCCURED:
+                                showWarningToast(
+                                  'Error Occured: Somthing is wrong during download process',
+                                  fToast,
+                                );
+                              case MusicsDownloadViewModel.DOWNLOAD_SUCCESS:
+                                showToast(
+                                  "Download Complete: Check the result of task",
+                                  fToast,
+                                );
+                            }
+                          },
                     child: Text('Download'),
                   );
-                }
+                },
               ),
             ),
             AbsoluteSpacer(width: 10),
             Consumer<MusicsDownloadViewModel>(
-              builder: (context, provider, child){
+              builder: (context, provider, child) {
                 return ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     backgroundColor: Color.fromARGB(255, 231, 243, 255),
-                    iconColor: Color.fromARGB(255, 16, 136, 255)
+                    iconColor: Color.fromARGB(255, 16, 136, 255),
                   ),
-                  onPressed: provider.downloadingState != MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED ? null : provider.onPressedSelectExternalStorage,
-                  onLongPress: provider.downloadingState != MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED ? null : provider.onPressedUnSelectExternalStorage,
+                  onPressed:
+                      provider.downloadingState !=
+                          MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED
+                      ? null
+                      : provider.onPressedSelectExternalStorage,
+                  onLongPress:
+                      provider.downloadingState !=
+                          MusicsDownloadViewModel.DOWNLOAD_STATE_NOT_STARTED
+                      ? null
+                      : provider.onPressedUnSelectExternalStorage,
                   child: Icon(
-                    provider.downloadPath == null ? Icons.folder_open : Icons.folder,
-                    size: 25
+                    provider.downloadPath == null
+                        ? Icons.folder_open
+                        : Icons.folder,
+                    size: 25,
                   ),
                 );
-              }
-            )
+              },
+            ),
           ],
         ),
       ],
@@ -159,10 +207,9 @@ class URLInputField extends StatelessWidget {
     Key? key,
     required VoidCallback? onPressed,
     required TextEditingController controller,
-  }) :
-    _onPressed = onPressed,
-    _controller = controller,
-    super(key: key);
+  }) : _onPressed = onPressed,
+       _controller = controller,
+       super(key: key);
 
   final VoidCallback? _onPressed;
   final TextEditingController _controller;
@@ -188,20 +235,21 @@ class DownloadableList extends StatelessWidget {
     Key? key,
     required List<Downloadable> downloadableList,
     required int downloadState,
-    required Function(int) onDeletePressed
-  }) : 
-  _downloadableList = downloadableList,
-  _downloadState = downloadState,
-  _onDeletePressed = onDeletePressed,
-  super(key: key);
+    required Function(int) onDeletePressed,
+  }) : _downloadableList = downloadableList,
+       _downloadState = downloadState,
+       _onDeletePressed = onDeletePressed,
+       super(key: key);
 
   final List<Downloadable> _downloadableList;
   final Function(int) _onDeletePressed;
   final int _downloadState;
 
-  Widget buildContent(VideoInfo videoInfo, int i){
+  Widget buildContent(VideoInfo videoInfo, int i) {
     return ListTile(
-      leading: videoInfo.thumbNail.thumbNailURL != null ? Image.network(videoInfo.thumbNail.thumbNailURL!) : null,
+      leading: videoInfo.thumbNail.thumbNailURL != null
+          ? Image.network(videoInfo.thumbNail.thumbNailURL!)
+          : null,
       title: Text(videoInfo.title, overflow: TextOverflow.ellipsis),
       subtitle: Text(videoInfo.authorName, overflow: TextOverflow.ellipsis),
       trailing: (() {
@@ -217,7 +265,7 @@ class DownloadableList extends StatelessWidget {
           default:
             return IconButton(
               onPressed: () => {_onDeletePressed(i)},
-              icon: Icon(Icons.delete)
+              icon: Icon(Icons.delete),
             );
         }
       })(),
@@ -227,39 +275,47 @@ class DownloadableList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: max(MediaQuery.of(context).size.height-350, 100), // Trash Code: Should be removed
+      height: max(
+        MediaQuery.of(context).size.height - 350,
+        100,
+      ), // Trash Code: Should be removed
       width: double.infinity,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         border: Border.all(color: basicTextColor_Light),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: _downloadState > MusicsDownloadViewModel.DOWNLOADING ? CircularProgressIndicatorWithMessage(message:"Cleaning Up...") : ListView.builder(
-        itemCount: _downloadableList.length, // Replace with your data count
-        itemBuilder: (context, index) {
-          return FutureBuilder(
-            future: _downloadableList[index].futureVideoInfo,
-            builder: (context, snapshot) {
+      child: _downloadState > MusicsDownloadViewModel.DOWNLOADING
+          ? CircularProgressIndicatorWithMessage(message: "Cleaning Up...")
+          : ListView.builder(
+              itemCount:
+                  _downloadableList.length, // Replace with your data count
+              itemBuilder: (context, index) {
+                return FutureBuilder(
+                  future: _downloadableList[index].futureVideoInfo,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      VideoInfo videoInfo = snapshot.data!;
+                      return buildContent(videoInfo, index);
+                    } else if (snapshot.hasError) {
+                      return buildContent(
+                        VideoInfo.defaultInfo(
+                          authorName: "Error: ${snapshot.error.runtimeType}",
+                        ),
+                        index,
+                      );
+                    }
 
-              if (snapshot.hasData){
-                VideoInfo videoInfo = snapshot.data!;
-                return buildContent(videoInfo, index);
-              } else if (snapshot.hasError){
-                return buildContent(VideoInfo.defaultInfo(
-                  authorName: "Error: ${snapshot.error.runtimeType}"
-                ), index);
-              }
-              
-              return ListTile(
-                leading: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-          );
-        },
-      ),
+                    return ListTile(
+                      leading: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
     );
   }
 }

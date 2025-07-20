@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 TextStyle basicTitle_Light({
   double fS = 24,
   Color? color = basicTextColor_Light,
-  TextDecoration? decoration}
-){
+  TextDecoration? decoration,
+}) {
   return TextStyle(
     fontSize: fS,
     color: color,
@@ -17,8 +17,8 @@ TextStyle basicTitle_Light({
 TextStyle basicInvertedTitle_Light({
   double fS = 24,
   Color? color = basicInvertedTextColor_Light,
-  TextDecoration? decoration}
-){
+  TextDecoration? decoration,
+}) {
   return TextStyle(
     fontSize: fS,
     color: color,
@@ -30,8 +30,8 @@ TextStyle basicInvertedTitle_Light({
 TextStyle basicText_Light({
   double fS = 14,
   Color? color = basicTextColor_Light,
-  TextDecoration? decoration}
-){
+  TextDecoration? decoration,
+}) {
   return TextStyle(
     fontSize: fS,
     color: color,

@@ -51,19 +51,19 @@ class _MusicsPageState extends State<MusicsHome> {
                   IconCard(
                     text: 'Music Upload',
                     icon: Icons.app_registration,
-                    onTap: () => setState(() => page = MusicsUpload())
+                    onTap: () => setState(() => page = MusicsUpload()),
                   ),
-                ]
+                ],
               ),
-            )
+            ),
           ),
           AbsoluteSpacer(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: padding),
-            child: page
+            child: page,
           ),
         ],
-      )
+      ),
     );
   }
 }
@@ -79,7 +79,7 @@ Widget MusicSearchBar() {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Checkbox(value: false, onChanged: (value){}),
+        Checkbox(value: false, onChanged: (value) {}),
         Text('ID', style: basicText_Light()),
         Text('Title', style: basicText_Light()),
         Text('Artist', style: basicText_Light()),

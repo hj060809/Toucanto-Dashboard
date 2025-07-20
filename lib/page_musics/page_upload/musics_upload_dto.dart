@@ -13,7 +13,7 @@ class AudioID {
   final String id;
   final Map<String, dynamic> settingJSON;
 
-  factory AudioID.fromJson(Map<String, dynamic> json){
+  factory AudioID.fromJson(Map<String, dynamic> json) {
     return AudioID(
       methodCode: json["AIGM"],
       id: json["id"],
@@ -33,7 +33,7 @@ class VectorID {
   final List<double> id;
   final Map<String, dynamic> settingJSON;
 
-  factory VectorID.fromJson(Map<String, dynamic> json){
+  factory VectorID.fromJson(Map<String, dynamic> json) {
     List<dynamic> id = json["id"];
     return VectorID(
       methodCode: json["VIGM"],
@@ -43,7 +43,7 @@ class VectorID {
   }
 }
 
-class MusicIdentifier{
+class MusicIdentifier {
   MusicIdentifier({
     required this.downloadTime,
     required this.uploader,
@@ -64,7 +64,7 @@ class MusicIdentifier{
   final VectorID vectorID;
   Map<String, String> duplicatedMusics;
 
-  factory MusicIdentifier.fromJson(Map<String, dynamic> json){
+  factory MusicIdentifier.fromJson(Map<String, dynamic> json) {
     Map<String, dynamic> duplications = json["duplications"];
     return MusicIdentifier(
       downloadTime: DateTime.fromMillisecondsSinceEpoch(json["download_time"]),
@@ -74,16 +74,16 @@ class MusicIdentifier{
       urlCode: json["URL_code"],
       audioID: AudioID.fromJson(json["audio_id"]),
       vectorID: VectorID.fromJson(json["vector_id"]),
-      duplicatedMusics: duplications.cast<String, String>()
+      duplicatedMusics: duplications.cast<String, String>(),
     );
   }
 }
 
-class MusicPreference{
+class MusicPreference {
   MusicPreference({
     this.averageListeningDuration = 0,
     this.likes = 0,
-    this.playCount = 0
+    this.playCount = 0,
   });
 
   final double averageListeningDuration;
@@ -91,27 +91,36 @@ class MusicPreference{
   final int playCount;
 }
 
-class Artist{
+class Artist {
   Artist({
     required this.name,
     required this.debutDate,
-    required this.nationality
+    this.nationality,
   });
 
   String name;
   DateTime debutDate;
-  VEnum nationality;
+  VEnum? nationality;
+
+  factory Artist.fromSupabase(
+    Map<String, dynamic> supabaseData,
+    VariableEnumerator nationalityVE,
+  ) {
+    return Artist(
+      name: supabaseData["name"],
+      debutDate: DateTime.parse(supabaseData["debut_date"]),
+      nationality: nationalityVE.getVEnumFromCode(supabaseData["nationality"]),
+    );
+  }
 }
 
-class MusicProfileImage{
-  MusicProfileImage({
-    required this.imagePath
-  });
+class MusicProfileImage {
+  MusicProfileImage({required this.imagePath});
 
   String imagePath;
 }
 
-class MusicInfo{
+class MusicInfo {
   MusicInfo({
     required this.fileName,
     required this.duration,
@@ -125,7 +134,7 @@ class MusicInfo{
     this.artist,
     this.profileImage,
     this.extraTags,
-    this.uploadState = MusicsUploadViewModel.UPLOAD_FREEZE
+    this.uploadState = MusicsUploadViewModel.UPLOAD_FREEZE,
   }) : preference = preference ?? MusicPreference();
 
   final String fileName;
@@ -143,15 +152,15 @@ class MusicInfo{
 
   int uploadState;
 
-  void setUploadingState(){
+  void setUploadingState() {
     uploadState = MusicsUploadViewModel.UPLOADING;
   }
 
-  void setUploadSuccessState(){
+  void setUploadSuccessState() {
     uploadState = MusicsUploadViewModel.UPLOAD_FAIL;
   }
 
-  void setUploadFailState(){
+  void setUploadFailState() {
     uploadState = MusicsUploadViewModel.UPLOAD_SUCCESS;
   }
 }

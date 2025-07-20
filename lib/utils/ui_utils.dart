@@ -45,8 +45,8 @@ Widget IconCard({
   IconData? icon = Icons.account_balance,
   String text = 'Card',
   double textSize = 16,
-  Function()? onTap}
-){
+  Function()? onTap,
+}) {
   return Container(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(16),
@@ -54,7 +54,8 @@ Widget IconCard({
     ),
     child: InkWell(
       onTap: onTap,
-      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -67,18 +68,18 @@ Widget IconCard({
             Text(
               text,
               style: basicTitle_Light(color: color, fS: textSize),
-            )
+            ),
           ],
         ),
-      )
-    )
+      ),
+    ),
   );
 }
 
 class CircularProgressIndicatorWithMessage extends StatelessWidget {
   const CircularProgressIndicatorWithMessage({
     super.key,
-    required this.message
+    required this.message,
   });
 
   final String message;
@@ -90,7 +91,7 @@ class CircularProgressIndicatorWithMessage extends StatelessWidget {
       children: [
         CircularProgressIndicator(),
         AbsoluteSpacer(height: 10),
-        Text(message, style: basicText_Light(fS: 15))
+        Text(message, style: basicText_Light(fS: 15)),
       ],
     );
   }
@@ -139,4 +140,3 @@ void showWarningToast(String message, FToast fToast) {
     gravity: ToastGravity.BOTTOM,
   );
 }
-

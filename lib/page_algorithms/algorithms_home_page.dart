@@ -46,14 +46,14 @@ class _PageState extends State<Page> {
                   icon: Icons.view_agenda,
                   onTap: () => setState(() => page = MyWidget()),
                 ),
-              ]
+              ],
             ),
-          )
+          ),
         ),
         AbsoluteSpacer(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: padding),
-          child: page
+          child: page,
         ),
       ],
     );

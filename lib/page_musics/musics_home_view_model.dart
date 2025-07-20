@@ -6,6 +6,6 @@ import 'dart:io';
 import 'package:toucanto_dashboard/utils/logic_utils.dart';
 import 'package:toucanto_dashboard/page_musics/musics_home_model.dart';
 
-class MusicsHomeViewModel extends ChangeNotifier{
+class MusicsHomeViewModel extends ChangeNotifier {
   final MusicsHomeModel _musicsHomeModel = MusicsHomeModel();
 }

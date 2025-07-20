@@ -18,46 +18,54 @@ class Downloadable {
   Downloadable({
     required this.url,
     required this.futureVideoInfo,
-    this.downloadState = DOWNLOAD_FROZEN
+    this.downloadState = DOWNLOAD_FROZEN,
   });
 
   MusicURL url;
   Future<VideoInfo> futureVideoInfo;
   int downloadState;
 
-  factory Downloadable.fromJson(Map<String, dynamic> json){
+  factory Downloadable.fromJson(Map<String, dynamic> json) {
     return Downloadable(
-      url: MusicURL(
-        url: json["url"]["url"],
-        videoID: json["url"]["video_id"]
-      ),
-      futureVideoInfo: Future((){return VideoInfo.fromJson(json["video_info"]);})
+      url: MusicURL(url: json["url"]["url"], videoID: json["url"]["video_id"]),
+      futureVideoInfo: Future(() {
+        return VideoInfo.fromJson(json["video_info"]);
+      }),
     );
   }
 
-  Future<Map<String, dynamic>> toJson() async { // toJson 구현할 일 더 생기면 Serializable로 재구현현
+  Future<Map<String, dynamic>> toJson() async {
+    // toJson 구현할 일 더 생기면 Serializable로 재구현현
     MusicURL musicURL = this.url;
     VideoInfo videoInfo = await this.futureVideoInfo;
 
     return {
-      "url":{
-        "url":musicURL.url,
-        "video_id":musicURL.videoID
+      "url": {"url": musicURL.url, "video_id": musicURL.videoID},
+      "video_info": {
+        "title": videoInfo.title,
+        "author_name": videoInfo.authorName,
+        "thumbnail_url": videoInfo.thumbNail.thumbNailURL,
+        "thumbnail_width": videoInfo.thumbNail.thumbnailWidth,
+        "thumbnail_height": videoInfo.thumbNail.thumbnailHeight,
       },
-      "video_info":{
-        "title":videoInfo.title,
-        "author_name":videoInfo.authorName,
-        "thumbnail_url":videoInfo.thumbNail.thumbNailURL,
-        "thumbnail_width":videoInfo.thumbNail.thumbnailWidth,
-        "thumbnail_height":videoInfo.thumbNail.thumbnailHeight,
-      }
     };
   }
 
-  void setReady(){downloadState = DOWNLOAD_READY;}
-  void setDownload(){downloadState = DOWNLOADING;}
-  void freeze(){downloadState = DOWNLOAD_FROZEN;}
-  void result(bool isSuccess){downloadState = isSuccess ? DOWNLOAD_SUCCESS : DOWNLOAD_FAIL;}
+  void setReady() {
+    downloadState = DOWNLOAD_READY;
+  }
+
+  void setDownload() {
+    downloadState = DOWNLOADING;
+  }
+
+  void freeze() {
+    downloadState = DOWNLOAD_FROZEN;
+  }
+
+  void result(bool isSuccess) {
+    downloadState = isSuccess ? DOWNLOAD_SUCCESS : DOWNLOAD_FAIL;
+  }
 }
 
 class ThumbNail {
@@ -68,7 +76,7 @@ class ThumbNail {
   ThumbNail({
     required this.thumbNailURL,
     required this.thumbnailHeight,
-    required this.thumbnailWidth
+    required this.thumbnailWidth,
   });
 }
 
@@ -80,18 +88,18 @@ class VideoInfo {
   VideoInfo({
     required this.title,
     required this.authorName,
-    required this.thumbNail
+    required this.thumbNail,
   });
 
-  factory VideoInfo.fromJson(Map<String, dynamic> json){
+  factory VideoInfo.fromJson(Map<String, dynamic> json) {
     return VideoInfo(
       title: json["title"],
       authorName: json["author_name"],
       thumbNail: ThumbNail(
         thumbNailURL: json["thumbnail_url"],
         thumbnailHeight: json["thumbnail_height"],
-        thumbnailWidth: json["thumbnail_width"]
-      )
+        thumbnailWidth: json["thumbnail_width"],
+      ),
     );
   }
 
@@ -100,16 +108,16 @@ class VideoInfo {
     String authorName = "Anonymous",
     String? thumbNailURL,
     int thumbnailHeight = 512,
-    int thumbnailWidth = 512
-  }){
+    int thumbnailWidth = 512,
+  }) {
     return VideoInfo(
       title: title,
       authorName: authorName,
       thumbNail: ThumbNail(
         thumbNailURL: thumbNailURL,
         thumbnailHeight: thumbnailHeight,
-        thumbnailWidth: thumbnailWidth
-      )
+        thumbnailWidth: thumbnailWidth,
+      ),
     );
   }
 }
