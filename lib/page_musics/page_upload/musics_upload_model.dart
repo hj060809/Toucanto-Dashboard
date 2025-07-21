@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:toucanto_dashboard/supabase/supabase_dao.dart';
+import 'package:toucanto_dashboard/supabase/data_manager.dart';
+import 'package:toucanto_dashboard/supabase/external_dtos/dto_provider.dart';
 import 'package:toucanto_dashboard/utils/logic_utils.dart';
 import 'package:toucanto_dashboard/global_constants.dart';
 import 'package:toucanto_dashboard/page_musics/page_upload/musics_upload_dto.dart';
 import 'package:toucanto_dashboard/utils/object_utils.dart';
 
 class MusicsUploadModel {
-  List<MusicInfo> musicInfos;
+  List<StatefulMusicInfo> statefulMusicInfos;
 
   late VariableEnumerator genreVE;
   late VariableEnumerator languageVE;
@@ -19,7 +19,7 @@ class MusicsUploadModel {
 
   late List<Artist> artists;
 
-  MusicsUploadModel({required this.musicInfos});
+  MusicsUploadModel({required this.statefulMusicInfos});
 
   Future<void> initializeVEs() async {
     await Future.wait([
@@ -35,27 +35,14 @@ class MusicsUploadModel {
       getNationalityEnum().then((ve) {
         nationalityVE = ve;
       }),
-      getExtraTags().then((ve) {
+      getExtraTagEnum().then((ve) {
         extraTagsVE = ve;
       }),
     ]);
   }
 
-  Future<void> initializeArtists() async {
-    await Future.wait([
-      getGenreEnum().then((es) {
-        genreVE = es;
-      }),
-      getLanguageEnum().then((es) {
-        languageVE = es;
-      }),
-      getMoodEnum().then((es) {
-        moodVE = es;
-      }),
-      getNationalityEnum().then((es) {
-        nationalityVE = es;
-      }),
-    ]);
+  Future<void> initializeArtistList() async {
+    artists = await getAllArtists(nationalityVE);
   }
 
   Future<double?> getMp3Duration(String mp3Path, String ffprobePath) async {
@@ -109,29 +96,17 @@ class MusicsUploadModel {
         continue;
       }
 
-      musicInfos.add(
-        MusicInfo(
-          fileName: fileName,
-          duration: duration,
-          identifier: musicIdentifier,
+      statefulMusicInfos.add(
+        StatefulMusicInfo(
+          musicInfo: MusicInfo(
+            fileName: fileName,
+            duration: duration,
+            identifier: musicIdentifier,
+          ),
         ),
       );
     }
 
     return failures;
-  }
-
-  Future<void> getAllArtists() async {
-    PostgrestList rawArtists = await supabaseDao.readArtists();
-    artists = [];
-    for (Map<String, dynamic> rawArtist in rawArtists) {
-      artists.add(
-        Artist(
-          name: rawArtist["name"],
-          debutDate: DateTime.parse(rawArtist["debut_date"]),
-          nationality: nationalityVE.getVEnumFromCode(rawArtist["nationality"]),
-        ),
-      );
-    }
   }
 }

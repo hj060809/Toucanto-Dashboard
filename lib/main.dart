@@ -4,7 +4,6 @@ import 'package:toucanto_dashboard/theme/styles.dart';
 import 'package:sidebarx/sidebarx.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:toucanto_dashboard/utils/logic_utils.dart';
 import 'global_constants.dart';
 import 'package:toucanto_dashboard/page_musics/musics_home_page.dart';
 import 'package:toucanto_dashboard/page_accounts/accounts_home_page.dart';
@@ -21,9 +20,6 @@ void main() async {
     anonKey: SUPABASE_API_KEY,
     debug: dotenv.get('FLUTTER_ENV', fallback: 'development') == 'development',
   );
-
-  cacheSupabaseEnums();
-  cacheExtraTag();
 
   runApp(const ToucantoApp());
 }

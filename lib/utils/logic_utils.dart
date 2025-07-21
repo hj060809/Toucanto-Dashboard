@@ -3,7 +3,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:toucanto_dashboard/global_constants.dart';
 import 'package:toucanto_dashboard/utils/object_utils.dart';
-import 'package:toucanto_dashboard/supabase/supabase_dao.dart';
 
 Future<Directory> getDirectory(List<String> path) async {
   Directory documentDir = await getApplicationDocumentsDirectory();
@@ -109,36 +108,6 @@ Future<void> writePropertyFile(
   await propertyFile.writeAsString(buffer.toString());
 }
 
-Future<int> getCurrentDataVersion(String dataName) async {
-  File versionFile = await getFile(
-    MUSIC_DOWNLOAD_CACHES_PATH,
-    "versions.properties",
-    "",
-  );
-  Map<String, int> versions = parseMapValueToInt(
-    await readPropertyFile(versionFile),
-  );
-
-  if (versions[dataName] == null) {
-    return -1;
-  }
-  return versions[dataName]!;
-}
-
-Future<void> updateDataVersion(String dataName, int version) async {
-  File versionFile = await getFile(
-    MUSIC_DOWNLOAD_CACHES_PATH,
-    "versions.properties",
-    "",
-  );
-  Map<String, int> versions = parseMapValueToInt(
-    await readPropertyFile(versionFile),
-  );
-  versions[dataName] = version;
-
-  await writePropertyFile(versionFile, versions);
-}
-
 String extractFileName(String path) {
   return path.replaceAll('\\', '/').split('/').last;
 }
@@ -151,99 +120,4 @@ String getCurrentTimeString() {
   }
 
   return "${now.year}-${formatter(now.month)}-${formatter(now.day)} ${formatter(now.hour)}h${formatter(now.minute)}m${formatter(now.second)}s";
-}
-
-typedef EnumReader = Future<List<String>> Function();
-Future<void> cacheSupabaseEnums() async {
-  Map<String, EnumReader> enumReaders = {
-    "genre": supabaseDao.readGenreList,
-    "language": supabaseDao.readLanguageList,
-    "mood": supabaseDao.readMoodList,
-    "nationality": supabaseDao.readNationalityList,
-  };
-
-  int enumVersion = await supabaseDao.readVersionAt("enums");
-  int localEnumVersion = await getCurrentDataVersion("enums");
-
-  enumReaders.forEach((label, reader) async {
-    if (enumVersion == localEnumVersion &&
-        await isFileExist(MUSIC_DOWNLOAD_CACHES_PATH, "$label.properties")) {
-      return;
-    }
-
-    reader().then((enums) async {
-      File enumFile = await getFile(
-        MUSIC_DOWNLOAD_CACHES_PATH,
-        "$label.properties",
-        "",
-      );
-
-      writePropertyFile(enumFile, enums.asMap(), KVReverse: true);
-    });
-  });
-
-  updateDataVersion("enums", enumVersion);
-}
-
-Future<void> cacheExtraTag() async {
-  int enumVersion = await supabaseDao.readVersionAt("extra_tag");
-  int localEnumVersion = await getCurrentDataVersion("extra_tag");
-
-  if (enumVersion == localEnumVersion &&
-      await isFileExist(MUSIC_DOWNLOAD_CACHES_PATH, "extra_tag.properties")) {
-    return;
-  }
-
-  supabaseDao.readExtraTagList().then((tags) async {
-    File enumFile = await getFile(
-      MUSIC_DOWNLOAD_CACHES_PATH,
-      "extra_tag.properties",
-      "",
-    );
-
-    writePropertyFile(enumFile, tags.asMap(), KVReverse: true);
-  });
-
-  updateDataVersion("extra_tag", enumVersion);
-}
-
-Future<VariableEnumerator> _getEnumFromProps(String enumType) async {
-  File? file = await getNullableFile(
-    MUSIC_DOWNLOAD_CACHES_PATH,
-    "$enumType.properties",
-  );
-  if (file == null) {
-    await cacheSupabaseEnums();
-    await cacheExtraTag();
-    throw Exception("Fail to Read Enums: File Does Not Exist.");
-  }
-
-  Map<String, int> enums = parseMapValueToInt(await readPropertyFile(file));
-
-  List<String> sortedCodes = enums.keys.toList();
-  sortedCodes.sort((ea, eb) {
-    return enums[ea]!.compareTo(enums[eb]!);
-  });
-
-  return VariableEnumerator(enumName: enumType, codeList: sortedCodes);
-}
-
-Future<VariableEnumerator> getGenreEnum() async {
-  return _getEnumFromProps("genre");
-}
-
-Future<VariableEnumerator> getLanguageEnum() async {
-  return _getEnumFromProps("language");
-}
-
-Future<VariableEnumerator> getMoodEnum() async {
-  return _getEnumFromProps("mood");
-}
-
-Future<VariableEnumerator> getNationalityEnum() async {
-  return _getEnumFromProps("nationality");
-}
-
-Future<VariableEnumerator> getExtraTags() async {
-  return _getEnumFromProps("extra_tag");
 }

@@ -1,11 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toucanto_dashboard/page_musics/page_upload/musics_upload_dto.dart';
+import 'package:toucanto_dashboard/supabase/external_dtos/dto_provider.dart';
 import 'package:toucanto_dashboard/theme/colors.dart';
 import 'package:toucanto_dashboard/theme/styles.dart';
-import 'package:toucanto_dashboard/utils/object_utils.dart';
 import 'package:toucanto_dashboard/utils/ui_utils.dart';
 import 'package:toucanto_dashboard/page_musics/page_upload/musics_upload_view_model.dart';
 
@@ -214,7 +212,9 @@ class _UploadDashboardState extends State<UploadDashboard> {
                         Text("No Music Selected"),
                       ],
                     )
-                  : MusicProfile(musicInfo: provider.musicInfos[selected!]);
+                  : MusicProfile(
+                      statefulMusicInfo: provider.statefulMusicInfos[selected!],
+                    );
             },
           ),
         ),
@@ -223,7 +223,7 @@ class _UploadDashboardState extends State<UploadDashboard> {
           child: Consumer<MusicsUploadViewModel>(
             builder: (context, provider, child) {
               return MusicList(
-                musicInfoList: provider.musicInfos,
+                statefulMusicInfoList: provider.statefulMusicInfos,
                 allPrepared: provider.allPrepared,
                 setHovered: setHovered,
                 setSelected: setSelected,
@@ -231,10 +231,10 @@ class _UploadDashboardState extends State<UploadDashboard> {
                 getSelected: getSelected,
                 onDeletePressed: (int index) {
                   provider.onMusicDeletePressed(index);
-                  if (provider.musicInfos.isEmpty) {
+                  if (provider.statefulMusicInfos.isEmpty) {
                     setSelected(null);
                   } else if (selected != null &&
-                      selected! > provider.musicInfos.length - 1) {
+                      selected! > provider.statefulMusicInfos.length - 1) {
                     setSelected(selected! - 1);
                   }
                 },
@@ -382,9 +382,9 @@ class MusicProfileArtistInput extends StatelessWidget {
 }
 
 class MusicProfile extends StatefulWidget {
-  const MusicProfile({super.key, required this.musicInfo});
+  const MusicProfile({super.key, required this.statefulMusicInfo});
 
-  final MusicInfo musicInfo;
+  final StatefulMusicInfo statefulMusicInfo;
 
   @override
   State<MusicProfile> createState() => _MusicProfileState();
@@ -396,12 +396,13 @@ class _MusicProfileState extends State<MusicProfile> {
 
   @override
   Widget build(BuildContext context) {
-    titleController.text = widget.musicInfo.title == null
+    final musicInfo = widget.statefulMusicInfo.musicInfo;
+    titleController.text = musicInfo.title == null
         ? ""
-        : widget.musicInfo.title!;
-    artistController.text = widget.musicInfo.artist == null
+        : musicInfo.title!;
+    artistController.text = musicInfo.artist == null
         ? ""
-        : widget.musicInfo.artist!.name;
+        : musicInfo.artist!.name;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(8),
@@ -412,7 +413,7 @@ class _MusicProfileState extends State<MusicProfile> {
             child: Row(
               children: [
                 MusicProfileImageContainer(
-                  profileImage: widget.musicInfo.profileImage,
+                  profileImage: musicInfo.profileImage,
                 ),
                 AbsoluteSpacer(width: 20),
                 Expanded(
@@ -444,18 +445,18 @@ class _MusicProfileState extends State<MusicProfile> {
 class MusicList extends StatelessWidget {
   const MusicList({
     super.key,
-    required List<MusicInfo> musicInfoList,
+    required List<StatefulMusicInfo> statefulMusicInfoList,
     required bool allPrepared,
     required this.setSelected,
     required this.setHovered,
     required this.getSelected,
     required this.getHovered,
     required Function(int) onDeletePressed,
-  }) : _musicInfoList = musicInfoList,
+  }) : _statefulMusicInfoList = statefulMusicInfoList,
        _allPrepared = allPrepared,
        _onDeletePressed = onDeletePressed;
 
-  final List<MusicInfo> _musicInfoList;
+  final List<StatefulMusicInfo> _statefulMusicInfoList;
   final bool _allPrepared;
 
   final Function(int) _onDeletePressed;
@@ -466,7 +467,8 @@ class MusicList extends StatelessWidget {
   final ValueGetter<int?> getHovered;
 
   Widget buildContent(int i) {
-    MusicInfo musicInfo = _musicInfoList[i];
+    MusicInfo musicInfo = _statefulMusicInfoList[i].musicInfo;
+    int uploadState = _statefulMusicInfoList[i].uploadState;
     return ListTile(
       leading: SizedBox(
         height: 60,
@@ -517,7 +519,7 @@ class MusicList extends StatelessWidget {
         }
       },
       trailing: () {
-        switch (musicInfo.uploadState) {
+        switch (uploadState) {
           case MusicsUploadViewModel.UPLOADING:
             return CircularProgressIndicator();
           case MusicsUploadViewModel.UPLOAD_SUCCESS:
@@ -546,7 +548,7 @@ class MusicList extends StatelessWidget {
       child: !_allPrepared
           ? CircularProgressIndicatorWithMessage(message: "Loading...")
           : ListView.builder(
-              itemCount: _musicInfoList.length, // Replace with your data count
+              itemCount: _statefulMusicInfoList.length, // Replace with your data count
               itemBuilder: (context, index) {
                 return FocusableActionDetector(
                   onShowHoverHighlight: (hover) {

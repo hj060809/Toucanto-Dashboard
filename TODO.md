@@ -4,11 +4,11 @@
 - **FEAT**: ffprobe, ffmpeg 관리를 어떻게 할 것인가?
     * > 외부 라이브러리 사용 => 유지/보수되는가? 안정적인가? 폐기 위험은 없는가?
     * > 직접 file control => 파일 버전 관리는? 메모리? 권한 등  
-- **SYS**: DB 전체 캐싱 시스템이 필요한가?
-    * > cache 매니저 추가
-    * > 주기적 캐싱 시스템
-- **SYS**: DB - client 데이터 transaction 정비
-    * > Global DTO가 필요함
+- **SYS**: utils, dao 정비
+    * > utils를 각 기능별로 분리 => 모듈화 => 한 파일로 전부 import 가능하게
+- **SYS**: 폴더 구조 정비
+    * > 전체 page 폴더 만들기
+    * > main page와 main.dart 분리
 - **FEAT**: Future.wait을 이용한 load-speed 개선
 - **BUG**: Upload - Download 페이지 넘나들 때 에러가 발생함
     * > loading 중 페이지 변경 시 crash 발생

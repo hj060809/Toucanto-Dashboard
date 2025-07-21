@@ -35,7 +35,7 @@ class Downloadable {
   }
 
   Future<Map<String, dynamic>> toJson() async {
-    // toJson 구현할 일 더 생기면 Serializable로 재구현현
+    // toJson 구현할 일 더 생기면 Serializable로 재구현
     MusicURL musicURL = this.url;
     VideoInfo videoInfo = await this.futureVideoInfo;
 

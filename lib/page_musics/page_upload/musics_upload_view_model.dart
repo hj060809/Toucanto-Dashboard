@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toucanto_dashboard/page_musics/page_upload/musics_upload_dto.dart';
 import 'package:toucanto_dashboard/page_musics/page_upload/musics_upload_model.dart';
+import 'package:toucanto_dashboard/supabase/external_dtos/dto_provider.dart';
 
 class MusicsUploadViewModel extends ChangeNotifier {
   static const MUSIC_LOADING = 0;
@@ -17,10 +18,10 @@ class MusicsUploadViewModel extends ChangeNotifier {
   static const LOAD_FAILED = 2;
 
   final MusicsUploadModel _musicsUploadModel = MusicsUploadModel(
-    musicInfos: [],
+    statefulMusicInfos: [],
   );
 
-  List<MusicInfo> get musicInfos => _musicsUploadModel.musicInfos;
+  List<StatefulMusicInfo> get statefulMusicInfos => _musicsUploadModel.statefulMusicInfos;
 
   List<Artist> get artists => _musicsUploadModel.artists;
 
@@ -53,7 +54,7 @@ class MusicsUploadViewModel extends ChangeNotifier {
   }
 
   Future<void> setArtists() async {
-    await _musicsUploadModel.getAllArtists();
+    await _musicsUploadModel.initializeArtistList();
     print(artists);
     artistState = LOADED;
     checkLoadState();
@@ -81,7 +82,7 @@ class MusicsUploadViewModel extends ChangeNotifier {
   }
 
   void onMusicDeletePressed(int index) {
-    _musicsUploadModel.musicInfos.removeAt(index);
+    _musicsUploadModel.statefulMusicInfos.removeAt(index);
     notifyListeners();
   }
 }
